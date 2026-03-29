@@ -1,0 +1,292 @@
+<rml>
+<body data-model="training_render">
+<div id="content-wrap"><div id="content">
+
+  <!-- Output -->
+  <span class="section-label" style="color: #4A90D9;">Output Folder: </span>
+  <br/>
+  <span class="path-display text-muted">{{output_dir}}</span>
+  <div class="btn-row">
+    <button class="btn" data-event-click="do_browse_folder">Browse Folder</button>
+    <button class="btn" data-event-click="do_open_folder">Open Output Folder</button>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- Capture Settings -->
+  <span class="section-label" style="color: #4A90D9;">Capture Settings</span>
+
+  <div class="setting-row"
+       title="Save a render snapshot every N training iterations (e.g. 10 = save at iter 10, 20, 30 ...).">
+    <span class="prop-label">Render every N iters</span>
+    <input type="text" class="number-input" data-value="render_every_str" />
+    <button class="num-step-btn" data-event-mousedown="num_step('render_every', -1)">-</button>
+    <button class="num-step-btn" data-event-mousedown="num_step('render_every', 1)">+</button>
+  </div>
+
+  <div class="setting-row"
+       title="Stop listening automatically after this iteration. Set to 0 to run until you press Stop manually.">
+    <span class="prop-label">Stop after iter (0 = no cap)</span>
+    <input type="text" class="number-input" data-value="max_iters_str" />
+    <button class="num-step-btn" data-event-mousedown="num_step('max_iters', -1)">-</button>
+    <button class="num-step-btn" data-event-mousedown="num_step('max_iters', 1)">+</button>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- Video Output (collapsible) -->
+  <div class="btn-row">
+    <button class="btn" data-event-click="toggle_video"
+            title="Show or hide video output settings.">{{video_arrow}} Video Output</button>
+  </div>
+
+  <div data-if="video_expanded">
+    <div class="setting-row"
+         title="Automatically collate all rendered PNGs into an MP4 video using ffmpeg when listening stops.">
+      <span class="prop-label">Create video on stop</span>
+      <input type="checkbox" data-value="create_video" />
+    </div>
+
+    <div class="setting-row"
+         title="Frame rate of the output video in frames per second.">
+      <span class="prop-label">Frame rate (fps)</span>
+      <input type="text" class="number-input" data-value="video_fps_str" />
+      <button class="num-step-btn" data-event-mousedown="num_step('video_fps', -1)">-</button>
+      <button class="num-step-btn" data-event-mousedown="num_step('video_fps', 1)">+</button>
+    </div>
+
+    <div class="setting-row" title="Choose the video encoder backend.">
+      <span class="prop-label">Encoder</span>
+      <select data-value="video_encoder">
+        <option value="pyav">PyAV (built-in) - MKV</option>
+        <option value="ffmpeg">FFmpeg (external) - MP4</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn--full" data-event-click="do_create_video"
+              title="Collate all PNG files in the output folder into a video now.">Create Video Now</button>
+    </div>
+
+    <span class="{{video_status_class}}">{{video_status_text}}</span>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- Resolution -->
+  <span class="section-label" style="color: #4A90D9;">Resolution</span>
+
+  <div class="setting-row"
+       title="Select a standard output resolution. Updates width and height used for render snapshots.">
+    <span class="prop-label">Preset</span>
+    <select data-value="resolution_idx">
+      <option value="0">720p  (1280&#xD7;720)</option>
+      <option value="1">1080p (1920&#xD7;1080)</option>
+      <option value="2">2K    (2560&#xD7;1440)</option>
+      <option value="3">4K    (3840&#xD7;2160)</option>
+    </select>
+  </div>
+
+  <span class="text-muted">{{aspect_ratio_text}}</span>
+
+  <div class="setting-row"
+       title="Camera field of view in degrees (5 to 170). Typical: 45 telephoto, 90 wide angle.">
+    <span class="prop-label">FoV (degrees)</span>
+    <input type="range" class="setting-slider"
+           data-value="fov_str" min="5" max="170" step="0.5" />
+    <span class="slider-value">{{fov_str}}</span>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- Camera Track 1 (collapsible) -->
+  <div class="btn-row">
+    <button class="btn" data-event-click="toggle_track1"
+            title="Show or hide the Circular Camera Track settings.">{{track1_arrow}} Circular Camera Track</button>
+  </div>
+
+  <div data-if="track1_expanded">
+    <br/>
+    <span class="path-display text-muted">{{track_path_display}}</span>
+    <div class="btn-row">
+      <button class="btn" data-event-click="do_browse_track">Browse Track File</button>
+      <button class="btn" data-event-click="do_load_track">Load Track</button>
+    </div>
+
+    <div class="setting-row"
+         title="Degrees to advance along the camera orbit path between each render snapshot.">
+      <span class="prop-label">Arc per snapshot (&#xB0;)</span>
+      <input type="text" class="number-input" data-value="arc_per_snap_str" />
+      <button class="num-step-btn" data-event-mousedown="num_step('arc_per_snap', -1)">-</button>
+      <button class="num-step-btn" data-event-mousedown="num_step('arc_per_snap', 1)">+</button>
+    </div>
+
+    <div class="setting-row"
+         title="Use the FoV stored in the track file, or the FoV set in the Resolution section above.">
+      <span class="prop-label">FoV source</span>
+      <select data-value="fov_source">
+        <option value="file">From track file</option>
+        <option value="panel">From panel</option>
+      </select>
+    </div>
+
+    <div class="setting-row"
+         title="When the camera reaches the end of the arc, loop back to the start angle.">
+      <span class="prop-label">Loop track</span>
+      <input type="checkbox" data-value="track_loop" />
+    </div>
+
+    <span class="{{track_status_class}}">{{track_status_text}}</span>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- Multi-Segment Camera Track (collapsible) -->
+  <div class="btn-row">
+    <button class="btn" data-event-click="toggle_track2"
+            title="Show or hide the Multi-Segment Camera Track settings.">{{track2_arrow}} Multi-Segment Camera Track</button>
+  </div>
+
+  <div data-if="track2_expanded">
+    <br/>
+    <span class="path-display text-muted">{{track2_path_display}}</span>
+    <div class="btn-row">
+      <button class="btn" data-event-click="do_browse_track2">Browse Track File</button>
+      <button class="btn" data-event-click="do_load_track2">Load Track</button>
+    </div>
+
+    <div class="setting-row"
+         title="Distance along the path in metres to advance between each render snapshot.">
+      <span class="prop-label">Distance per snapshot (m)</span>
+      <input type="text" class="number-input" data-value="dist_per_snap_str" />
+      <button class="num-step-btn" data-event-mousedown="num_step('dist_per_snap', -1)">-</button>
+      <button class="num-step-btn" data-event-mousedown="num_step('dist_per_snap', 1)">+</button>
+    </div>
+
+    <div class="setting-row"
+         title="When the camera reaches the end of the path, loop back to the start.">
+      <span class="prop-label">Loop track</span>
+      <input type="checkbox" data-value="track2_loop" />
+    </div>
+
+    <span class="{{track2_status_class}}">{{track2_status_text}}</span>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- LFS Camera Path (collapsible) -->
+  <div class="btn-row">
+    <button class="btn" data-event-click="toggle_track3"
+            title="Show or hide the LFS Camera Path settings.">{{track3_arrow}} LFS Camera Path</button>
+  </div>
+
+  <div data-if="track3_expanded">
+    <br/>
+    <span class="path-display text-muted">{{track3_path_display}}</span>
+    <div class="btn-row">
+      <button class="btn" data-event-click="do_browse_track3">Browse Path File</button>
+      <button class="btn" data-event-click="do_load_track3">Load Path</button>
+    </div>
+
+    <div class="setting-row"
+         title="Seconds of animation time to advance between each render snapshot.">
+      <span class="prop-label">Seconds per snapshot</span>
+      <input type="text" class="number-input" data-value="secs_per_snap_str" />
+      <button class="num-step-btn" data-event-mousedown="num_step('secs_per_snap', -1)">-</button>
+      <button class="num-step-btn" data-event-mousedown="num_step('secs_per_snap', 1)">+</button>
+    </div>
+
+    <div class="setting-row"
+         title="Loop back to the start of the path when the end is reached.">
+      <span class="prop-label">Loop path</span>
+      <input type="checkbox" data-value="track3_loop" />
+    </div>
+
+    <span class="{{track3_status_class}}">{{track3_status_text}}</span>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- Active track -->
+  <div class="setting-row"
+       title="Choose which camera source to use during render snapshots.">
+    <span class="prop-label">Active track</span>
+    <select data-value="active_track">
+      <option value="none">Scene camera</option>
+      <option value="track1">Circular Camera Track</option>
+      <option value="track2">Multi-Segment Camera Track</option>
+      <option value="track3">LFS Camera Path</option>
+    </select>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- Path Preview (collapsible) -->
+  <div class="btn-row">
+    <button class="btn" data-event-click="toggle_preview"
+            title="Show or hide the Path Preview settings.">{{preview_arrow}} Path Preview</button>
+  </div>
+
+  <div data-if="preview_expanded">
+    <div class="setting-row"
+         title="Show loaded camera tracks as coloured lines in the 3D viewport.">
+      <span class="prop-label">Show path preview</span>
+      <input type="checkbox" data-value="show_preview" />
+    </div>
+
+    <div class="setting-row"
+         title="Playback speed for the path preview animation.">
+      <span class="prop-label">Preview speed</span>
+      <select data-value="preview_speed_idx">
+        <option value="0">0.5&#xD7;</option>
+        <option value="1">1&#xD7;</option>
+        <option value="2">2&#xD7;</option>
+        <option value="3">4&#xD7;</option>
+      </select>
+    </div>
+
+    <div data-if="preview_idle">
+      <button class="btn btn--full" data-event-click="do_start_preview"
+              title="Animate the viewport camera along the active track path.">Preview Path</button>
+    </div>
+    <div data-if="preview_active_state">
+      <span class="text-muted">{{preview_progress_text}}</span>
+      <button class="btn btn--danger btn--full"
+              data-event-click="do_stop_preview">Stop Preview</button>
+    </div>
+  </div>
+
+  <div class="separator"></div>
+
+  <!-- Start / Stop -->
+  <div data-if="show_idle">
+    <button class="btn btn--success btn--full"
+            data-event-click="do_start">Start Listening</button>
+  </div>
+  <div data-if="show_listening">
+    <button class="btn btn--danger btn--full"
+            data-event-click="do_stop">Stop</button>
+  </div>
+  <div data-if="show_start_training">
+    <button class="btn btn--full" style="margin-top: 4dp;"
+            title="Start the LFS training session."
+            data-event-click="do_start_training">Start Training</button>
+  </div>
+  <div data-if="show_pause_training">
+    <button class="btn btn--full" style="margin-top: 4dp;"
+            title="Pause the LFS training session."
+            data-event-click="do_pause_training">Pause Training</button>
+  </div>
+  <div data-if="show_resume_training">
+    <button class="btn btn--full" style="margin-top: 4dp;"
+            title="Resume the LFS training session."
+            data-event-click="do_resume_training">Resume Training</button>
+  </div>
+
+  <!-- Status -->
+  <div class="separator"></div>
+  <span class="status-text text-default">{{status_text}}</span>
+
+</div></div>
+</body>
+</rml>
