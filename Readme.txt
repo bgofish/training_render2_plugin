@@ -3,7 +3,7 @@ Training Render plugin for LichtFeld Studio. It runs captures images to an image
 
 Installation
 Manual Installation
-Install inside LFS using https://github.com/bgofish/training_render_plugin  this will install to ~/.lichtfeld/plugins/training_render
+Install inside LFS using https://github.com/bgofish/training_renderBETA_plugin  this will install to ~/.lichtfeld/plugins/training_renderBETA
 
 Capture Methods
 1)Current View capture (can be set manually or selecting an image camera from the view or the image list.
