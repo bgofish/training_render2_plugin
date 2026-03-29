@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 [project]
-name        = "Training_RenderBeta"
+name        = "Training_RenderBETA"
 version     = "1.4.0B"
 description = "Render snapshots/Video from either fixed or moving camera positions during 3DGS training"
 authors     = [{ name = "Brian Davis" }]
