@@ -5,7 +5,7 @@
 name        = "training_render"
 version     = "1.4.1"
 description = "Render snapshots/Video from either fixed or moving camera positions during 3DGS training"
-authors     = [{ name = "Brian Davis" }]
+author     = "Brian Davis (bb6)" 
 
 dependencies = ["av"]
 
@@ -13,7 +13,7 @@ dependencies = ["av"]
 auto_start        = true
 hot_reload        = true
 plugin_api        = ">=1,<2"
-lichtfeld_version = ">=0.4.2"
+lichtfeld_version = ">=0.5.0"
 required_features = []
 
 
