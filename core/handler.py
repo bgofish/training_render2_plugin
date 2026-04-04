@@ -66,6 +66,29 @@ def on_post_step(ctx=None):
             )
         return  # skip – no valid iteration, would produce a blank frame
 
+    # ── Rate schedule mode ───────────────────────────────────────────────────
+    if getattr(State, "rate_mode", "fixed") == "schedule":
+        schedule = getattr(State, "rate_schedule", [])
+        if schedule:
+            # Find the active row — highest start_iter <= current iteration
+            active_every = schedule[0][1]  # default to first row
+            for start_iter, every in schedule:
+                if iteration >= start_iter:
+                    active_every = every
+                else:
+                    break
+
+            # STOP row reached — stop immediately, no render
+            if active_every == "STOP":
+                do_stop()
+                return
+
+            if iteration % active_every != 0 and iteration != 1:
+                return
+            render_and_save(iteration, State.snap_count)
+            return
+
+    # ── Fixed mode (original behaviour) ──────────────────────────────────────
     if State.max_iters > 0 and iteration >= State.max_iters:
         render_and_save(iteration, State.snap_count)
         do_stop()
