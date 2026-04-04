@@ -1,5 +1,5 @@
 Training Render Plugin for LichtFeld Studio
-Training Render plugin for LichtFeld Studio. It runs captures images to an image folder during training.
+Training Render plugin for LichtFeld Studio. It captures images to an image folder during training.
 
 Installation
 Manual Installation
