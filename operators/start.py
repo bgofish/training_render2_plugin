@@ -31,6 +31,13 @@ class TRAININGRENDER_OT_start(Operator):
         State.listening            = True
         _renderer._collate_started = False
 
+        # Snapshot rate_mode and rate_schedule into State so handler.py can read them
+        # (these are set by the panel; default to fixed mode if not yet configured)
+        if not hasattr(State, "rate_mode"):
+            State.rate_mode     = "fixed"
+        if not hasattr(State, "rate_schedule"):
+            State.rate_schedule = []
+
         ensure_post_step_hook_registered()
         lf.log.info(
             f"Training Render: listening every {State.render_every} iters → {out}"
