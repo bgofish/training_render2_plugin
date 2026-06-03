@@ -11,6 +11,17 @@ import json
 import math
 from pathlib import Path
 
+import lichtfeld as lf
+
+# ── Version detection ─────────────────────────────────────────────────────────
+# v0.5.0.x = -Y-up   v0.5.1+ = +Y-up
+def _parse_version(v: str) -> tuple:
+    import re
+    parts = v.lstrip("v").split(".")[:3]
+    return tuple(int(re.match(r"\d+", x).group()) for x in parts)
+
+Y_UP = _parse_version(lf.__version__) >= (0, 5, 1)
+
 
 # ── Pure-Python helpers ───────────────────────────────────────────────────────
 
@@ -131,7 +142,12 @@ class LFSPathPlayer:
 
         pos, rot, fov = self._interpolate(t, loop=loop)
 
-        forward = _quat_rotate(rot, (0.0,  0.0,  1.0))
+        # +Y-up: forward=(0,0,-1), up=(0,1,0)
+        # -Y-up: forward=(0,0, 1), up=(0,1,0)
+        if Y_UP:
+            forward = _quat_rotate(rot, (0.0,  0.0, -1.0))
+        else:
+            forward = _quat_rotate(rot, (0.0,  0.0,  1.0))
         up_vec  = _quat_rotate(rot, (0.0,  1.0,  0.0))
         target  = (pos[0] + forward[0], pos[1] + forward[1], pos[2] + forward[2])
 

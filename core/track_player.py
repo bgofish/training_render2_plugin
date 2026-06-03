@@ -5,6 +5,16 @@ import json
 import math
 from pathlib import Path
 
+import lichtfeld as lf
+
+# ── Version detection ─────────────────────────────────────────────────────────
+def _parse_version(v: str) -> tuple:
+    import re
+    parts = v.lstrip("v").split(".")[:3]
+    return tuple(int(re.match(r"\d+", x).group()) for x in parts)
+
+Y_UP = _parse_version(lf.__version__) >= (0, 5, 1)
+
 
 class TrackPlayer:
     """Loads a camera_track.json exported by 360_record and provides
@@ -46,7 +56,6 @@ class TrackPlayer:
         target = self.center
         up     = (0.0, 1.0, 0.0) if self.up_axis == "y" else (0.0, 0.0, 1.0)
         return eye, target, up, self.fov
-
     @property
     def info(self) -> str:
         return (
@@ -74,7 +83,8 @@ class TrackPlayer:
         if self.up_axis == "y":
             x = cx + r * math.cos(theta)
             y = cy + e
-            z = cz + r * math.sin(theta)
+            # +Y-up: Z axis is negated relative to -Y-up
+            z = cz + r * (-math.sin(theta) if Y_UP else math.sin(theta))
         else:  # z-up
             x = cx + r * math.cos(theta)
             y = cy + r * math.sin(theta)

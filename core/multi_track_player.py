@@ -5,6 +5,16 @@ import json
 import math
 from pathlib import Path
 
+import lichtfeld as lf
+
+# ── Version detection ─────────────────────────────────────────────────────────
+def _parse_version(v: str) -> tuple:
+    import re
+    parts = v.lstrip("v").split(".")[:3]
+    return tuple(int(re.match(r"\d+", x).group()) for x in parts)
+
+Y_UP = _parse_version(lf.__version__) >= (0, 5, 1)
+
 
 class MultiSegmentTrackPlayer:
     """Loads a multi-segment camera_track.json (linear + orbit) exported by
@@ -162,6 +172,7 @@ def _orbit_pos(poi, radius, elevation, angle_deg, up_axis):
     cx, cy, cz = poi
     r, e = radius, elevation
     if up_axis == "y":
-        return (cx + r * math.cos(theta), cy + e, cz + r * math.sin(theta))
+        # +Y-up: Z axis is negated relative to -Y-up
+        return (cx + r * math.cos(theta), cy + e, cz + r * (-math.sin(theta) if Y_UP else math.sin(theta)))
     else:
         return (cx + r * math.cos(theta), cy + r * math.sin(theta), cz + e)
