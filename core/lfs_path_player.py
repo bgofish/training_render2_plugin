@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """LFSPathPlayer — plays back a LightField Studio camera_path.json file.
-
 Updated with Catmull-Rom Spline interpolation for smooth (Blue Line) paths
 and support for easing modes (Linear, Ease In, Ease Out, Ease In-Out).
 """
