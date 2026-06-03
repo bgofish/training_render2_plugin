@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2025
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+
 import json
 import math
 from pathlib import Path
